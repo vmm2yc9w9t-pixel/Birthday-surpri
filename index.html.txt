@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For My Penguin 🐧💖</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: Arial;
+  color: white;
+  text-align: center;
+}
+
+/* MAIN */
+h1 {
+  position: absolute;
+  top: 12%;
+  width: 100%;
+  font-size: 3em;
+}
+
+#name {
+  position: absolute;
+  top: 22%;
+  width: 100%;
+  font-size: 4em;
+  color: orange;
+  text-shadow: 0 0 20px red, 0 0 40px orange;
+  animation: flicker 0.15s infinite alternate;
+}
+
+@keyframes flicker {
+  from {opacity: 0.7;}
+  to {opacity: 1;}
+}
+
+#story {
+  position: absolute;
+  top: 65%;
+  width: 100%;
+  font-size: 1.3em;
+  opacity: 0;
+  transition: 1s;
+}
+
+/* CAKE */
+#cake {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4em;
+  cursor: pointer;
+  display: none;
+}
+
+/* START BUTTON */
+#startBtn {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 30px;
+  border: none;
+  background: #ff3c00;
+  color: white;
+  cursor: pointer;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- START BUTTON (needed for sound autoplay) -->
+<button id="startBtn" onclick="startExperience()">Tap to Start 💖</button>
+
+<h1>Happy Birthday 💖</h1>
+<div id="name">ZAIBUN 🔥</div>
+
+<div id="story"></div>
+
+<div id="cake" onclick="cutCake()">🎂</div>
+
+<canvas id="canvas"></canvas>
+
+<!-- 🎵 MUSIC -->
+<audio id="music" src="https://www.bensound.com/bensound-music/bensound-love.mp3"></audio>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+let mode = "fire";
+
+/* 🔥 FIRE */
+function fireEffect() {
+  for (let i = 0; i < 6; i++) {
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: canvas.height,
+      size: Math.random()*6+2,
+      speedY: Math.random()*-4-1,
+      color: `hsl(${Math.random()*50},100%,50%)`
+    });
+  }
+
+  particles.forEach((p,i)=>{
+    p.y += p.speedY;
+    p.size *= 0.96;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+
+    if(p.size<0.5) particles.splice(i,1);
+  });
+}
+
+/* ❤️ HEART */
+function heartEffect() {
+  for(let t=0;t<Math.PI*2;t+=0.2){
+    let x = 16*Math.pow(Math.sin(t),3);
+    let y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+
+    ctx.fillStyle="red";
+    ctx.fillRect(canvas.width/2+x*10,canvas.height/2+y*10,2,2);
+  }
+}
+
+/* 💌 STORY */
+let lines = [
+"From the moment I met you… 💫",
+"You became my Penguin 🐧",
+"My cute little Cat 🐱",
+"My everything 💖",
+"Today you turn 22 ✨",
+"And I still fall for you every day ❤️",
+"Happy Birthday Zaibun 🔥"
+];
+
+let i=0;
+
+function showStory(){
+  if(i<lines.length){
+    document.getElementById("story").innerHTML = lines[i];
+    document.getElementById("story").style.opacity = 1;
+
+    speak(lines[i]);
+
+    i++;
+    setTimeout(showStory,2500);
+  } else {
+    document.getElementById("cake").style.display = "block";
+    mode="heart";
+  }
+}
+
+/* 🔊 VOICE */
+function speak(text){
+  let speech = new SpeechSynthesisUtterance(text);
+  speech.rate = 0.9;
+  speech.pitch = 1.2;
+  speech.lang = "en-US";
+  speechSynthesis.speak(speech);
+}
+
+/* 🎂 CAKE */
+function cutCake(){
+  alert("🎂 Happy Birthday My Love 💖🔥");
+}
+
+/* 🎞 LOOP */
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  if(mode==="fire") fireEffect();
+  if(mode==="heart") heartEffect();
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* 🚀 START */
+function startExperience(){
+  document.getElementById("startBtn").style.display = "none";
+
+  // Play music
+  document.getElementById("music").play();
+
+  showStory();
+}
+</script>
+
+</body>
+</html>
